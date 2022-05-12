@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"image-resizer/internal"
+)
 
 func main() {
-	fmt.Println("start proccess")
+	internal.InitApp()
 }
