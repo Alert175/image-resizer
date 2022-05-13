@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"log"
+	"os"
 )
 
 // список ссылок на пути файлов
@@ -17,6 +18,10 @@ func InitApp() {
 	fileList, errorFileList := ScanFolder("./input")
 	if errorFileList != nil {
 		log.Fatal(errorFileList)
+	}
+	if len(fileList) == 0 {
+		fmt.Println("Файлы не обнаружены")
+		os.Exit(0)
 	}
 	FilePathList = append(FilePathList, fileList...)
 	fmt.Println("Найдено файлов:", len(FilePathList))

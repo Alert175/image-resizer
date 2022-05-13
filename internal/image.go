@@ -5,9 +5,20 @@ import (
 	"image/png"
 	"log"
 	"os"
-
+	"strings"
 	"github.com/nfnt/resize"
 )
+
+func ImageResize(filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	imageExtension := strings.Split(filePath, ".")[len(strings.Split(filePath, ".")) - 1]
+	imageName := strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0]
+	isJpg =: strings.Contains()
+}
 
 func JpegComplession(filePath string) {
 	file, err := os.Open(filePath)
@@ -21,7 +32,7 @@ func JpegComplession(filePath string) {
 	}
 	file.Close()
 
-	compressImage := resize.Resize(300, 0, img, resize.Bicubic)
+	compressImage := resize.Resize(500, 0, img, resize.Lanczos3)
 
 	compressFile, err := os.Create("./output/test_imge.jpg")
 	if err != nil {
