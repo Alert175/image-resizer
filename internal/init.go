@@ -10,7 +10,7 @@ import (
 var FilePathList = []string{}
 
 // список разрешенных расширений файлов
-var AccessExtension = []string{"jpg"}
+var AccessExtensions = []string{"jpg", "jpeg", "png"}
 
 // Получение данных об содержании каталога input
 func InitApp() {
@@ -25,10 +25,11 @@ func InitApp() {
 	}
 	FilePathList = append(FilePathList, fileList...)
 	fmt.Println("Найдено файлов:", len(FilePathList))
-	JpegComplession(FilePathList[0])
-	resultFileList, errorFileList := ScanFolder("./output")
-	if errorFileList != nil {
-		log.Fatal(errorFileList)
-	}
-	fmt.Println("Создано файлов:", len(resultFileList))
+	// JpegComplession(FilePathList[0])
+	// resultFileList, errorFileList := ScanFolder("./output")
+	// if errorFileList != nil {
+	// 	log.Fatal(errorFileList)
+	// }
+	// fmt.Println("Создано файлов:", len(resultFileList))
+	ImageResize(FilePathList[0])
 }
