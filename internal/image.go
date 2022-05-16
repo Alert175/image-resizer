@@ -1,10 +1,10 @@
 package internal
 
 import (
+	"errors"
 	"image"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -16,7 +16,6 @@ import (
 func ImageResize(filePath string, imageWidth int) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
-		log.Fatal(err)
 		return "", err
 	}
 	imageExtension := strings.Split(filePath, ".")[len(strings.Split(filePath, "."))-1]
@@ -31,8 +30,7 @@ func ImageResize(filePath string, imageWidth int) (string, error) {
 	imagePath := strings.Join(imagePathList, "/")
 
 	if !IsJpg(imageExtension) && !IsPng(imageExtension) {
-		log.Fatal("Не найдено валидное расширение файла")
-		return "", err
+		return "", errors.New("не найдено валидное расширение файла")
 	}
 
 	var imageContent image.Image
@@ -65,7 +63,7 @@ func ImageResize(filePath string, imageWidth int) (string, error) {
 	compressFile, err := os.Create(imagePath + "/" + imageName + "." + imageExtension)
 
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	defer compressFile.Close()
 

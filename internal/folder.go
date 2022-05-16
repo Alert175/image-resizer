@@ -1,8 +1,8 @@
 package internal
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -12,7 +12,7 @@ func ScanFolder(argPath string) ([]string, error) {
 
 	files, error := ioutil.ReadDir(argPath)
 	if error != nil {
-		log.Fatal(error)
+		fmt.Println(error)
 		return []string{}, error
 	}
 

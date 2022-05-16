@@ -2,8 +2,6 @@ package internal
 
 import (
 	"fmt"
-	"log"
-	"os"
 )
 
 // список разрешенных расширений файлов
@@ -11,14 +9,17 @@ var AccessExtensions = []string{"jpg", "jpeg", "png"}
 
 // Получение данных об содержании каталога input
 func InitApp() {
-	fmt.Println("Canninng...")
+	fmt.Println("Сканирование...")
+	exitStr := ""
 	fileList, errorFileList := ScanFolder("./input")
 	if errorFileList != nil {
-		log.Fatal(errorFileList)
+		fmt.Println("Ошибка чтения каталога input ", errorFileList)
 	}
 	if len(fileList) == 0 {
 		fmt.Println("Файлы не обнаружены")
-		os.Exit(0)
+		fmt.Println("Введите что-либо для продолжения")
+		fmt.Scan(&exitStr)
+		return
 	}
 
 	var imageWidth int
@@ -34,16 +35,20 @@ func InitApp() {
 	for _, path := range fileList {
 		_, err := ImageResize(path, imageWidth)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		} else {
 			resultFileCounter = resultFileCounter + 1
+			exitStr = exitStr + "-"
+			fmt.Print("-")
 		}
 	}
 
 	_, resultErrorFileList := ScanFolder("./output")
 	if resultErrorFileList != nil {
-		log.Fatal(errorFileList)
+		fmt.Println("Ошибка чтения каталога input ", resultErrorFileList)
 	}
-
+	fmt.Println("")
 	fmt.Println("Создано файлов: ", resultFileCounter)
+	fmt.Println("Введите что-либо для продолжения")
+	fmt.Scan(&exitStr)
 }
