@@ -50,3 +50,12 @@ func CreateFolder(argPathFolder string) error {
 	}
 	return nil
 }
+
+// создание вложенных папок
+func RemoveFolder(argPathFolder string) error {
+	err := os.RemoveAll(argPathFolder)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -6,9 +6,6 @@ import (
 	"os"
 )
 
-// список ссылок на пути файлов
-var FilePathList = []string{}
-
 // список разрешенных расширений файлов
 var AccessExtensions = []string{"jpg", "jpeg", "png"}
 
@@ -23,13 +20,30 @@ func InitApp() {
 		fmt.Println("Файлы не обнаружены")
 		os.Exit(0)
 	}
-	FilePathList = append(FilePathList, fileList...)
-	fmt.Println("Найдено файлов:", len(FilePathList))
-	// JpegComplession(FilePathList[0])
-	// resultFileList, errorFileList := ScanFolder("./output")
-	// if errorFileList != nil {
-	// 	log.Fatal(errorFileList)
-	// }
-	// fmt.Println("Создано файлов:", len(resultFileList))
-	ImageResize(FilePathList[0])
+
+	var imageWidth int
+	var resultFileCounter int
+
+	fmt.Println("Найдено файлов:", len(fileList))
+	fmt.Println("Укажите ширину изображений: ")
+	fmt.Scan(&imageWidth)
+
+	RemoveFolder("./output")
+	CreateFolder("./output")
+
+	for _, path := range fileList {
+		_, err := ImageResize(path, imageWidth)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			resultFileCounter = resultFileCounter + 1
+		}
+	}
+
+	_, resultErrorFileList := ScanFolder("./output")
+	if resultErrorFileList != nil {
+		log.Fatal(errorFileList)
+	}
+
+	fmt.Println("Создано файлов: ", resultFileCounter)
 }

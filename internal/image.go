@@ -1,26 +1,34 @@
 package internal
 
 import (
-	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/nfnt/resize"
 )
 
-func ImageResize(filePath string) (string, error) {
+// сжатие картинок и складирование их в папки
+func ImageResize(filePath string, imageWidth int) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 		return "", err
 	}
 	imageExtension := strings.Split(filePath, ".")[len(strings.Split(filePath, "."))-1]
-	imageName := strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0]
-	imagePath := strings.ReplaceAll(strings.ReplaceAll(filePath, "/"+imageName+"."+imageExtension, ""), "./input", "./output")
+	imageName := strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0] + "__w" + strconv.Itoa(imageWidth)
+	imagePathSlice := strings.Split(strings.Replace(filePath, "./input", "", 1), "/")
+	imagePathList := []string{"./output"}
+	for index, element := range imagePathSlice {
+		if index < len(imagePathSlice)-1 && index != 0 {
+			imagePathList = append(imagePathList, element)
+		}
+	}
+	imagePath := strings.Join(imagePathList, "/")
 
 	if !IsJpg(imageExtension) && !IsPng(imageExtension) {
 		log.Fatal("Не найдено валидное расширение файла")
@@ -28,6 +36,7 @@ func ImageResize(filePath string) (string, error) {
 	}
 
 	var imageContent image.Image
+	var compressImage image.Image
 
 	if IsJpg(imageExtension) {
 		imgC, err := jpeg.Decode(file)
@@ -35,6 +44,7 @@ func ImageResize(filePath string) (string, error) {
 			return "", err
 		} else {
 			imageContent = imgC
+			compressImage = resize.Resize(uint(imageWidth), 0, imageContent, resize.MitchellNetravali)
 		}
 	}
 	if IsPng(imageExtension) {
@@ -43,19 +53,16 @@ func ImageResize(filePath string) (string, error) {
 			return "", err
 		} else {
 			imageContent = imgC
+			compressImage = resize.Resize(uint(imageWidth), 0, imageContent, resize.Bicubic)
 		}
 	}
 
 	file.Close()
 
-	compressImage := resize.Resize(500, 0, imageContent, resize.NearestNeighbor)
-	fmt.Println(imagePath)
 	if err := CheckFolder(imagePath); err != nil {
-
-	} else {
-
+		CreateFolder(imagePath)
 	}
-	compressFile, err := os.Create("./output/" + imageName + "." + imageExtension)
+	compressFile, err := os.Create(imagePath + "/" + imageName + "." + imageExtension)
 
 	if err != nil {
 		log.Fatal(err)
@@ -90,50 +97,4 @@ func IsPng(argExtension string) bool {
 		}
 	}
 	return false
-}
-
-func JpegComplession(filePath string) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, err := jpeg.Decode(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	file.Close()
-
-	compressImage := resize.Resize(500, 0, img, resize.Lanczos3)
-
-	compressFile, err := os.Create("./output/test_imge.jpg")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer compressFile.Close()
-
-	jpeg.Encode(compressFile, compressImage, nil)
-}
-
-func PngComplession(filePath string) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	img, err := png.Decode(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	file.Close()
-
-	compressImage := resize.Resize(300, 0, img, resize.Bicubic)
-
-	compressFile, err := os.Create("./output/test_imge.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer compressFile.Close()
-
-	png.Encode(compressFile, compressImage)
 }
