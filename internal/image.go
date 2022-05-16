@@ -12,14 +12,23 @@ import (
 	"github.com/nfnt/resize"
 )
 
-// сжатие картинок и складирование их в папки
-func ImageResize(filePath string, imageWidth int) (string, error) {
+/*
+	Принимаю путь до файла, проверяю что это картинка, выполняю сжатие
+*/
+func ImageResize(filePath string, imageWidth int, isPrefix bool) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
 	imageExtension := strings.Split(filePath, ".")[len(strings.Split(filePath, "."))-1]
-	imageName := strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0] + "__w" + strconv.Itoa(imageWidth)
+
+	var imageName string
+	if isPrefix {
+		imageName = strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0] + "__w" + strconv.Itoa(imageWidth)
+	} else {
+		imageName = strings.Split(strings.Split(filePath, "/")[len(strings.Split(filePath, "/"))-1], ".")[0]
+	}
+
 	imagePathSlice := strings.Split(strings.Replace(filePath, "./input", "", 1), "/")
 	imagePathList := []string{"./output"}
 	for index, element := range imagePathSlice {

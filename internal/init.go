@@ -24,16 +24,31 @@ func InitApp() {
 
 	var imageWidth int
 	var resultFileCounter int
+	var isAddSuffix string
+	var isDeleteOutput string
 
 	fmt.Println("Найдено файлов:", len(fileList))
+
 	fmt.Println("Укажите ширину изображений: ")
 	fmt.Scan(&imageWidth)
+	fmt.Println("Добавлять суффикс к названию файла? y/n: ")
+	fmt.Scan(&isAddSuffix)
+	fmt.Println("Очистить папку output? y/n: ")
+	fmt.Scan(&isDeleteOutput)
 
-	RemoveFolder("./output")
-	CreateFolder("./output")
+	// очистка папки output
+	if isDeleteOutput == "y" {
+		err := CheckFolder("./output")
+		if err != nil {
+			CreateFolder("./output")
+		} else {
+			RemoveFolder("./output")
+			CreateFolder("./output")
+		}
+	}
 
 	for _, path := range fileList {
-		_, err := ImageResize(path, imageWidth)
+		_, err := ImageResize(path, imageWidth, isAddSuffix == "y")
 		if err != nil {
 			fmt.Println(err)
 		} else {
