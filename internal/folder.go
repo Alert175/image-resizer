@@ -1,9 +1,12 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 // Рекурсивное сканирование папки и получение ссылок на файлы
@@ -58,4 +61,27 @@ func RemoveFolder(argPathFolder string) error {
 		return err
 	}
 	return nil
+}
+
+// открыть папку через проводник ОС
+func OpenWidthExplorer(argPath string) error {
+	if runtime.GOOS == "linux" {
+		if err := exec.Command("xdg-open", argPath).Start(); err != nil {
+			return err
+		}
+		return nil
+	}
+	if runtime.GOOS == "darwin" {
+		if err := exec.Command("open", argPath).Start(); err != nil {
+			return err
+		}
+		return nil
+	}
+	if runtime.GOOS == "windows" {
+		if err := exec.Command("explorer", argPath).Start(); err != nil {
+			return err
+		}
+		return nil
+	}
+	return errors.New("not found os name")
 }

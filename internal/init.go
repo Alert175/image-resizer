@@ -64,6 +64,7 @@ func InitApp() {
 	}
 	fmt.Println("")
 	fmt.Println("Создано файлов: ", resultFileCounter)
+	OpenWidthExplorer("./output")
 	fmt.Println("Введите что-либо для продолжения")
 	fmt.Scan(&exitStr)
 }
